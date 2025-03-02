@@ -13,6 +13,11 @@
     <name>TwelveHao12</name>
     
   </author>
+
+  <follow_challenge>
+    <feedId>119063660567593984</feedId>
+    <userId>118939285211202560</userId>
+  </follow_challenge>
   
   <generator uri="https://hexo.io/">Hexo</generator>
   
