@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2025-03-10T13:23:46.031Z</updated>
+  <updated>2026-02-19T14:04:26.750Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -17,11 +17,32 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>如何使用Vibe Coding开发全栈应用？</title>
+    <link href="http://example.com/2026/02/19/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Vibe-Coding%E5%BC%80%E5%8F%91%E5%85%A8%E6%A0%88%E5%BA%94%E7%94%A8%EF%BC%9F/"/>
+    <id>http://example.com/2026/02/19/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Vibe-Coding%E5%BC%80%E5%8F%91%E5%85%A8%E6%A0%88%E5%BA%94%E7%94%A8%EF%BC%9F/</id>
+    <published>2026-02-19T13:58:21.000Z</published>
+    <updated>2026-02-19T14:04:26.750Z</updated>
+    
+    <content type="html"><![CDATA[<p>听了一位使用Vibe Coding的前辈的演讲，他分享了他使用Vibe Coding的一些思路和方法，遂写下来记录一下。</p><span id="more"></span><p>他在自己创业的过程中，大量应用了Vibe Coding进行前后端全栈应用开发。我认为他的一些方法和观点简单有效、不无道理。</p><h1 id="LLM的特性及其解决方案"><a href="#LLM的特性及其解决方案" class="headerlink" title="LLM的特性及其解决方案"></a>LLM的特性及其解决方案</h1><ul><li>对话控制在10轮以内，多了以后LLM可能会丢失记忆</li><li>严格使用<strong>git</strong>进行版本控制，不要依赖AI的代码回退功能。原因是对于AI做出的修改，我们是不可控的</li><li>如果多轮对话（2-3轮）后，LLM结果结果还是不行，果断回退代码（<code>git reset --hard</code>或者<code>git revert</code>），不要为丢失代码感到惋惜。开启新会话后，AI工具很快就能追回原来的进度</li><li>上述方法要是还不行，果断更换模型尝试，即使是稍差一点的模型都没事</li><li>让AI工具（例如Claude Code）同时生成测试代码，并编写钩子（Hook），生成完毕后自动执行<strong>所有</strong>测试</li><li>重视回归测试，这也对应了上一个观点中，需要运行所有测试的内容。原因还是一样，对于AI的修改，我们是不可控制的（保不准它就偷偷修改了之前已经测试过的代码 ( ﹁ ﹁ ) ~→）</li><li>尽量少修改CLAUDE.md&#x2F;AGENT.md等文件，LLM生成的内容大概率已经很不错了</li></ul><h1 id="使用Vibe-Coding工具进行全栈开发"><a href="#使用Vibe-Coding工具进行全栈开发" class="headerlink" title="使用Vibe Coding工具进行全栈开发"></a>使用Vibe Coding工具进行全栈开发</h1><ul><li>使用Plan模式，先讨论出项目需求方案，确定项目所需的技术栈</li><li>确定好后，让LLM形成文档，保存下来</li><li>使用Build模式，快速制作出前端的demo<ul><li>使用<strong>HTML</strong>输出，因为它是最通用的前端描述方法，适配各种框架</li><li>一图胜千言，必要的时候可以画出草稿上传给LLM，让它构造相应的HTML</li><li>对于需要向后端请求的数据展示部分，先使用Mock Data</li><li>在HTML生成完毕后，让LLM根据HTML蓝图，使用相关技术栈构造出前端网站及Mock Data</li></ul></li><li>前端做好后，基于前端进行后端的搭建<ul><li>利用前端构建出的Mock Data，搭建数据库</li><li>利用数据库结构和Mock Data的数据，搭建出后端对应的Schema，以及相关接口，并形成接口文档</li></ul></li><li>后端搭建完成并测试后，进行前后端数据对接工作<ul><li>让LLM根据接口文档，将原有的Mock Data修改为从后端获取实际数据的逻辑</li></ul></li></ul><h1 id="使用Vibe-Coding工具进行文档写作"><a href="#使用Vibe-Coding工具进行文档写作" class="headerlink" title="使用Vibe Coding工具进行文档写作"></a>使用Vibe Coding工具进行文档写作</h1><p>我现在主要还是使用Opencode作为主要的LLM工具，用它上面的免费模型 <del>（收费的模型对于学生党来说还是有点贵了）</del> ，搭配相应的skills来辅助我写文档（报告 &#x2F; ppt），下面是我进行文档写作时常用的方法和skills。</p><ul><li>我先大致编辑好文档的内容，放在项目的目录中</li><li>在目录当中创建好.opencode&#x2F;skills文件夹（或者.claude&#x2F;skills文件夹）</li><li>按需求放入下面的skills<ul><li><a href="https://github.com/anthropics/skills/tree/main/skills">anthropics docx、xlsx、pptx、pdf</a>：用于读取我写好的文档，或者按照文档的要求输出为对应的格式</li><li><a href="https://github.com/Shubhamsaboo/awesome-llm-apps/tree/main/awesome_agent_skills/editor">editor</a>：让LLM基于我编辑好的内容，调整成比较正式的格式和语言</li><li><a href="https://github.com/openclaw/skills/tree/main/skills/liuxy951129-cpu/humanizer-zh">humanizer-zh</a>：增强文档的人味 <del>（能增强一点是一点了）</del></li></ul></li><li>先规划，告诉LLM具体的使用需求后，再让它进行写作</li><li>对于文档写作类任务，我感觉不太需要使用&#x2F;init让LLM生成记忆文档，毕竟不是什么复杂的任务，执行init还挺费时间的</li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;听了一位使用Vibe Coding的前辈的演讲，他分享了他使用Vibe Coding的一些思路和方法，遂写下来记录一下。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="blog" scheme="http://example.com/categories/blog/"/>
+    
+    
+    <category term="AI" scheme="http://example.com/tags/AI/"/>
+    
+  </entry>
+  
+  <entry>
     <title>业余无线电操作证A类考试-易混知识点总结</title>
-    <link href="http://example.com/2025/03/10/amateur-radio-a-test/"/>
-    <id>http://example.com/2025/03/10/amateur-radio-a-test/</id>
+    <link href="http://example.com/2025/03/10/%E4%B8%9A%E4%BD%99%E6%97%A0%E7%BA%BF%E7%94%B5%E6%93%8D%E4%BD%9C%E8%AF%81A%E7%B1%BB%E8%80%83%E8%AF%95-%E6%98%93%E6%B7%B7%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/"/>
+    <id>http://example.com/2025/03/10/%E4%B8%9A%E4%BD%99%E6%97%A0%E7%BA%BF%E7%94%B5%E6%93%8D%E4%BD%9C%E8%AF%81A%E7%B1%BB%E8%80%83%E8%AF%95-%E6%98%93%E6%B7%B7%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/</id>
     <published>2025-03-10T12:22:46.000Z</published>
-    <updated>2025-03-10T13:23:46.031Z</updated>
+    <updated>2026-02-19T07:07:25.885Z</updated>
     
     <content type="html"><![CDATA[<p>这是我在近期备考业余无线电A类操作证考试时整理的易混知识点，现在已经通过考试，把这些知识点电子化发布出来，供大家参考。</p><span id="more"></span><p>所有的知识点全部来自官方的题库(智谱上的模拟考试题)，以及Anki官网上公开的<a href="https://ankiweb.net/shared/info/1463989760">🔗Shared Deck</a>，经过我个人的手写整理。</p><hr><h2 id="瓦特和dB"><a href="#瓦特和dB" class="headerlink" title="瓦特和dB"></a>瓦特和dB</h2><ul><li>5W    &#x3D; 37dBm</li><li>0.25W &#x3D; 54dBμ</li><li>0.4kW &#x3D; 86dBμ</li></ul><h2 id="dBd和dBi"><a href="#dBd和dBi" class="headerlink" title="dBd和dBi"></a>dBd和dBi</h2><ul><li><p>dBd：最大辐射方向的功率密度 ÷ 半波长振子最大辐射方向的功率密度</p></li><li><p>dBi：最大辐射方向的功率密度 ÷ 理想点源天线最大辐射方向的功率密度</p></li><li><p>甲：4.5dBd；乙：5.85dBi。在远处，甲比乙强0.8dB</p></li><li><p>甲：2.9dBd；乙：5.85dBi。在远处，乙比甲强0.8dB</p></li></ul><h2 id="频段、波段"><a href="#频段、波段" class="headerlink" title="频段、波段"></a>频段、波段</h2><ul><li><p>专用业余波段：7M, 14M, 21M, 28M, 47G (Hz)</p></li><li><p>u、v段业余业务与其他业务共用的主要业务频率：50MHz, 144MHz</p></li><li><p>u、v段业余业务作为唯一主要业务频段：共3个，≤3GHz的频段为144~146MHz</p></li><li><p>u、v段业余业务作为次要频段：135.7kHz、10.1MHz、430MHz</p></li><li><p>6m波段：50~54MHz 主要业务</p></li><li><p>2m波段：144~146MHz 唯一主要业务；146~148MHz 共用主要业务</p></li><li><p>0.7m波段：430~440MHz 次要业务（主要业务为无线电定位和航空无线电导航）</p></li><li><p>144MHz频段应避免占用：144~144.035MHz 和 145.8~146MHz</p></li><li><p>430MHz频段应避免占用：431.9~432.240MHz 和 435~438MHz</p></li><li><p>其中，145.8~146MHz和435~438MHz作为业余卫星通信使用</p></li></ul><h2 id="分区"><a href="#分区" class="headerlink" title="分区"></a>分区</h2><ul><li>我国的CQ分区：23，24，27</li><li>我国的ITU分区：33，42，43，44，50</li></ul><h2 id="简语、缩语"><a href="#简语、缩语" class="headerlink" title="简语、缩语"></a>简语、缩语</h2><ul><li>ARDF：业余无线电测向</li><li>电台设备：RIG</li><li>收信机：RCVR、RX</li><li>发信机：XMTR、TX</li><li>收发信机：XCVR</li><li>WX：天气</li><li>谁在乎叫我：QRZ?</li><li>他台干扰：QRM</li><li>天电干扰：QRN</li></ul><h2 id="词头"><a href="#词头" class="headerlink" title="词头"></a>词头</h2><ul><li>k: 10^3</li><li>M: 10^6</li><li>G: 10^9</li><li>T: 10^12</li><li>m: 10^(-3)</li><li>μ: 10^(-6)</li><li>n: 10^(-9)</li><li>p: 10^(-12)</li></ul><h2 id="法律法规、处罚"><a href="#法律法规、处罚" class="headerlink" title="法律法规、处罚"></a>法律法规、处罚</h2><ul><li>警告、查封&#x2F;没收设备、没收违法所得；情节严重的，并处1k~5k元罚款：<ul><li>擅自设置、使用业余无线电台的单位或个人</li><li>业余电台干扰无线电业务</li><li>业余电台随意变更核定项目，发送和接收与业余无线电无关的信号</li></ul></li><li>责令限期改正，可处警告&#x2F;3万以下罚款：<ul><li>超出核定范围使用频率&#x2F;有其他违反频率管理有关规定的行为</li><li>涂改、仿制、伪造、倒卖、出租、出借电台执照&#x2F;以其他形式非法转让执照</li><li>盗用、出租、出借、转让、私自编制或违法使用电台呼号</li><li>以不正当手段取得业余无线电台执照</li><li>隐瞒、欺骗、拒绝提供真实材料给监督检查的业余无线电管理机构</li></ul></li></ul><h2 id="电波的传播速度"><a href="#电波的传播速度" class="headerlink" title="电波的传播速度"></a>电波的传播速度</h2><ul><li>电波在天线中的传播速度为：真空波速的0.95倍</li><li>电波在同轴电缆中的传播速度为：真空波速的0.65倍</li></ul>]]></content>
     
@@ -30,10 +51,10 @@
     
     
     
-    <category term="业余无线电" scheme="http://example.com/categories/%E4%B8%9A%E4%BD%99%E6%97%A0%E7%BA%BF%E7%94%B5/"/>
+    <category term="wiki" scheme="http://example.com/categories/wiki/"/>
     
     
-    <category term="业余无线电A类" scheme="http://example.com/tags/%E4%B8%9A%E4%BD%99%E6%97%A0%E7%BA%BF%E7%94%B5A%E7%B1%BB/"/>
+    <category term="业余无线电" scheme="http://example.com/tags/%E4%B8%9A%E4%BD%99%E6%97%A0%E7%BA%BF%E7%94%B5/"/>
     
   </entry>
   
